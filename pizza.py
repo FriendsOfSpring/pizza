@@ -1,8 +1,10 @@
 
+
 import codecs
 
 from selenium import webdriver
 from bs4 import BeautifulSoup
+import re
 
 driver = webdriver.Chrome()
 driver.maximize_window()
@@ -22,10 +24,35 @@ driver.get("https://pizzahut.jp/pc/set_menu/?link_id=chd_set")
 
 html_source = driver.page_source # アクセスしたサイトのページソースを返す
 bs_obj = BeautifulSoup(html_source) # ページソースを引数にとり、BeautifulSoupのオブジェクトを生成
+
+
 '''
+
+pizza=[]
+price=[]
+p=[]
 
 driver.get('https://pizzahut.jp/pc/set_menu/')
 html_source = driver.page_source # アクセスしたサイトのページソースを返す
-bs_obj = BeautifulSoup(html_source) # ページソースを引数にとり、BeautifulSoupのオブジェクトを生成
+soup = BeautifulSoup(html_source,"html.parser") # ページソースを引数にとり、BeautifulSoupのオブジェクトを生成
+i=0
+driver.quit()
 
-print(html_source)
+pizzalist=soup.find_all("p",class_="ph3_title")
+pizzaprice=soup.find_all("ul",class_="ph3_list-size")
+#print(pizzalist)
+for name in pizzalist:
+    text=re.sub(r'[\t\n]',"",name.text,flags=re.MULTILINE)
+    text=text.replace("\u3000"," ")
+    pizza.append(text)
+    p.append({"name":text})
+for pprice in pizzaprice:
+    text=re.sub(r'[\t\n]',"",pprice.text,flags=re.MULTILINE)
+    text=text.replace("\u3000"," ")
+    #price.append(text)
+    p[i]["size"]=re.search(r"S|M|L",text).group()
+    p[i]["price"]=int(re.search(r"[\d,]+",text).group().replace(",",""))
+    i+=1
+#print(pizza)
+#print(price)
+print(p)
