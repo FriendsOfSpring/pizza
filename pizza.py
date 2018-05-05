@@ -5,11 +5,17 @@ import codecs
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import re
+import urllib.request, urllib.error
+
+def cmp(a, b):
+    if a == b: return 0
+    return -1 if a < b else 1
+
+'''
 
 driver = webdriver.Chrome()
 driver.maximize_window()
 
-'''
 driver.get('https://pizzahut.jp/pc/top')
 driver.implicitly_wait(5)
 
@@ -31,12 +37,14 @@ bs_obj = BeautifulSoup(html_source) # ページソースを引数にとり、Bea
 pizza=[]
 price=[]
 p=[]
-
+'''
 driver.get('https://pizzahut.jp/pc/set_menu/')
 html_source = driver.page_source # アクセスしたサイトのページソースを返す
+driver.quit()
+'''
+html_source = urllib.request.urlopen("https://pizzahut.jp/pc/set_menu/")
 soup = BeautifulSoup(html_source,"html.parser") # ページソースを引数にとり、BeautifulSoupのオブジェクトを生成
 i=0
-driver.quit()
 
 pizzalist=soup.find_all("p",class_="ph3_title")
 pizzaprice=soup.find_all("ul",class_="ph3_list-size")
@@ -56,3 +64,7 @@ for pprice in pizzaprice:
 #print(pizza)
 #print(price)
 print(p)
+
+s=sorted(p,key=lambda x:x["price"])
+print("\n")
+print(s)
